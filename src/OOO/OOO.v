@@ -6,7 +6,6 @@
 
 `include "rf.v"
 `include "memi.v"
-`include "memd.v"
 
 
 module OOO(
@@ -14,6 +13,7 @@ module OOO(
   input rst
 );
   integer i, j;
+  genvar k;
 
   // STEP: PC
   reg  [`MEMI_SIZE_LOG-1:0] F_pc;
@@ -247,12 +247,12 @@ module OOO(
 
       // STEP.4: execute
       for (i=0; i<`ROB_SIZE; i=i+1) begin
-        if (ROB_state[i]==`READY && ROB_exe_this_cycle[i]) begin
-          ROB_rd_data [i] <= ROB_rd_data_wire;
-          ROB_taken   [i] <= ROB_taken_wire;
-          ROB_next_pc [i] <= ROB_next_pc_wire;
+        if (ROB_state[i]==`READY) begin
+          ROB_rd_data[i] <= ROB_rd_data_wire[i];
+          ROB_taken  [i] <= ROB_taken_wire[i];
+          ROB_next_pc[i] <= ROB_next_pc_wire[i];
 
-          ROB_state [i] <= `FINISHED;
+          ROB_state[i] <= `FINISHED;
         end
       end
 
@@ -292,80 +292,50 @@ module OOO(
 
 
   // STEP: Execute + Memory Read
-  // STEP.X: arbitor to choose an entry in ROB
-  reg [`ROB_SIZE-1:0] ROB_exe_this_cycle;
-  always @(*) begin
-    ROB_exe_this_cycle = 0;
-    for (i=`ROB_SIZE-1; i >= 0; i=i-1)
-      if (ROB_state[i]==`READY)
-        ROB_exe_this_cycle = (1 << i);
-  end
-
-
-  // STEP.X: choose an input to execute unit
-  reg [`MEMI_SIZE_LOG-1:0] ROB_pc_wire;
-  reg [`INST_SIZE_LOG-1:0] ROB_op_wire;
-  reg [`REG_LEN-1      :0] ROB_rs1_imm_wire;
-  reg [`MEMI_SIZE_LOG-1:0] ROB_rs1_br_offset_wire;
-  reg [`REG_LEN-1      :0] ROB_rs1_data_wire;
-  reg [`REG_LEN-1      :0] ROB_rs2_data_wire;
-  reg                      ROB_rd_data_use_alu_wire;
-  reg                      ROB_is_br_wire;
-  always @(*) begin
-    ROB_pc_wire              = 0;
-    ROB_op_wire              = 0;
-    ROB_rs1_imm_wire         = 0;
-    ROB_rs1_data_wire        = 0;
-    ROB_rs1_br_offset_wire   = 0;
-    ROB_rs2_data_wire        = 0;
-    ROB_rd_data_use_alu_wire = 0;
-    ROB_is_br_wire           = 0;
-    for (i=0; i < `ROB_SIZE; i=i+1) begin
-      ROB_pc_wire              = ROB_pc_wire              | {`MEMI_SIZE_LOG{ROB_exe_this_cycle[i]}} & ROB_pc[i];
-      ROB_op_wire              = ROB_op_wire              | {`INST_SIZE_LOG{ROB_exe_this_cycle[i]}} & ROB_op[i];
-      ROB_rs1_imm_wire         = ROB_rs1_imm_wire         | {`REG_LEN      {ROB_exe_this_cycle[i]}} & ROB_rs1_imm[i];
-      ROB_rs1_data_wire        = ROB_rs1_data_wire        | {`REG_LEN      {ROB_exe_this_cycle[i]}} & ROB_rs1_data[i];
-      ROB_rs1_br_offset_wire   = ROB_rs1_br_offset_wire   | {`MEMI_SIZE_LOG{ROB_exe_this_cycle[i]}} & ROB_rs1_br_offset[i];
-      ROB_rs2_data_wire        = ROB_rs2_data_wire        | {`REG_LEN      {ROB_exe_this_cycle[i]}} & ROB_rs2_data[i];
-      ROB_rd_data_use_alu_wire = ROB_rd_data_use_alu_wire |                 ROB_exe_this_cycle[i]   & ROB_rd_data_use_alu[i];
-      ROB_is_br_wire           = ROB_is_br_wire           |                 ROB_exe_this_cycle[i]   & ROB_is_br[i];
+  // STEP.X: Memory Read
+  reg [`REG_LEN-1:0] memd [`MEMD_SIZE-1:0];
+  always @(posedge clk) begin
+    if (rst) begin
+`ifdef INIT_MEMD_CUSTOMIZED
+        memd[0] <= 0;
+        memd[1] <= 1;
+        memd[2] <= 0;
+        memd[3] <= 0;
+`else
+      for (i=0; i<`MEMD_SIZE; i=i+1)
+        memd[i] <= 0;
+`endif
     end
   end
 
 
-  // STEP.X: Memory Read
-  wire [`MEMD_SIZE_LOG-1:0] mem_addr;
-  wire [`REG_LEN-1      :0] mem_data;
-  memd memd_instance(
-    .clk(clk), .rst(rst),
-    .req_addr(mem_addr), .resp_data(mem_data)
-  );
-
-
   // STEP.X: output from alu
-  wire [`REG_LEN-1      :0] ROB_rd_data_wire;
-  wire                      ROB_taken_wire;
-  wire [`MEMI_SIZE_LOG-1:0] ROB_next_pc_wire;
+  wire [`MEMD_SIZE_LOG-1:0] mem_addr        [`ROB_SIZE-1:0];
+  wire [`REG_LEN-1      :0] ROB_rd_data_wire[`ROB_SIZE-1:0];
+  wire [`ROB_SIZE-1     :0] ROB_taken_wire;
+  wire [`MEMI_SIZE_LOG-1:0] ROB_next_pc_wire[`ROB_SIZE-1:0];
+  generate for (k=0; k <`ROB_SIZE; k=k+1) begin
   execute execute_instance(
-    .pc(ROB_pc_wire),
-    .op(ROB_op_wire),
+    .pc(ROB_pc[k]),
+    .op(ROB_op[k]),
 
-    .rs1_imm(ROB_rs1_imm_wire),
-    .rs1_br_offset(ROB_rs1_br_offset_wire),
-    .rs1_data(ROB_rs1_data_wire),
+    .rs1_imm(ROB_rs1_imm[k]),
+    .rs1_br_offset(ROB_rs1_br_offset[k]),
+    .rs1_data(ROB_rs1_data[k]),
 
-    .rs2_data(ROB_rs2_data_wire),
+    .rs2_data(ROB_rs2_data[k]),
 
-    .mem_addr(mem_addr),
-    .mem_data(mem_data),
+    .mem_addr(mem_addr[k]),
+    .mem_data(memd[mem_addr[k]]),
 
-    .rd_data_use_alu(ROB_rd_data_use_alu_wire),
-    .rd_data(ROB_rd_data_wire),
+    .rd_data_use_alu(ROB_rd_data_use_alu[k]),
+    .rd_data(ROB_rd_data_wire[k]),
 
-    .is_br(ROB_is_br_wire),
-    .taken(ROB_taken_wire),
-    .next_pc(ROB_next_pc_wire)
+    .is_br(ROB_is_br[k]),
+    .taken(ROB_taken_wire[k]),
+    .next_pc(ROB_next_pc_wire[k])
   );
+  end endgenerate
 
 
 
