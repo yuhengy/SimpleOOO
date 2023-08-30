@@ -13,6 +13,7 @@ module OOO(
   input clk,
   input rst
 );
+  integer i, j;
 
   // STEP: PC
   reg  [`MEMI_SIZE_LOG-1:0] F_pc;
@@ -187,7 +188,6 @@ module OOO(
   wire ROB_full;
   wire ROB_empty;
 
-  integer i, k;
   always@(posedge clk) begin
     if (rst) begin
       for (i=0; i<`ROB_SIZE; i=i+1) begin
@@ -260,17 +260,17 @@ module OOO(
       // STEP.5: forward
       for (i=0; i<`ROB_SIZE; i=i+1) begin
         if (ROB_state[i]==`FINISHED) begin
-          for (k=0; k<`ROB_SIZE; k=k+1) begin
-            if (ROB_state[k]==`STALLED && ROB_rs1_stall[k] &&
-                ROB_rs1_ROBlink[k]==i[`ROB_SIZE_LOG-1:0]) begin
-              ROB_rs1_stall[k] <= 1'b0;
-              ROB_rs1_data[k] <= ROB_rd_data[i];
+          for (j=0; j<`ROB_SIZE; j=j+1) begin
+            if (ROB_state[j]==`STALLED && ROB_rs1_stall[j] &&
+                ROB_rs1_ROBlink[j]==i[`ROB_SIZE_LOG-1:0]) begin
+              ROB_rs1_stall[j] <= 1'b0;
+              ROB_rs1_data[j] <= ROB_rd_data[i];
             end
 
-            if (ROB_state[k]==`STALLED && ROB_rs2_stall[k] &&
-                ROB_rs2_ROBlink[k]==i[`ROB_SIZE_LOG-1:0]) begin
-              ROB_rs2_stall[k] <= 1'b0;
-              ROB_rs2_data[k] <= ROB_rd_data[i];
+            if (ROB_state[j]==`STALLED && ROB_rs2_stall[j] &&
+                ROB_rs2_ROBlink[j]==i[`ROB_SIZE_LOG-1:0]) begin
+              ROB_rs2_stall[j] <= 1'b0;
+              ROB_rs2_data[j] <= ROB_rd_data[i];
             end
           end
         end
