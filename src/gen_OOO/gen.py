@@ -21,11 +21,11 @@ def write_file(file, content):
 
 
 def gen(
-
-  output_dir
+  output_dir,
+  VERSION=1
 ):
 
-  v = gen_OOO()
+  v = gen_OOO(VERSION)
   write_file(output_dir + "/OOO.v", v)
 
   v = gen_param()
@@ -40,8 +40,11 @@ def gen(
   write_file(output_dir + "/rf.v", v)
   v = gen_memi()
   write_file(output_dir + "/memi.v", v)
-  v = gen_memd()
-  write_file(output_dir + "/memd.v", v)
+  if VERSION==1:
+    pass
+  else:
+    v = gen_memd()
+    write_file(output_dir + "/memd.v", v)
 
 
 
