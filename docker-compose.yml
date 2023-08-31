@@ -2,7 +2,7 @@ version: "3.9"
 services:
   env:
     build: .
-    platform: linux/amd64
+    # platform: linux/amd64
     volumes:
       - .:/vagrant
     stdin_open: true # docker run -i
