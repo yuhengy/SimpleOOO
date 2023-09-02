@@ -17,7 +17,6 @@ module OOO(
 
   // STEP: PC
   reg  [`MEMI_SIZE_LOG-1:0] F_pc;
-  wire [`MEMI_SIZE_LOG-1:0] F_next_pc;
   always @(posedge clk) begin
     if (rst) F_pc <= 0;
     else     F_pc <= F_next_pc;
@@ -362,6 +361,15 @@ module OOO(
   assign C_taken   = ROB_taken  [ROB_head];
   assign C_squash  = C_is_br && (ROB_predicted_taken[ROB_head] != ROB_taken[ROB_head]);
   assign C_next_pc = ROB_next_pc[ROB_head];
+
+
+
+
+  // STEP: for verification
+  reg [`MEMI_SIZE_LOG-1:0] C_pc_last;
+  always @(posedge clk)
+    if (C_valid)
+      C_pc_last <= ROB_pc[ROB_head];
 
 endmodule
 
