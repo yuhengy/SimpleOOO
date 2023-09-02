@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
 
   # STEP: compile
-  command = "echo \"\\`include \\\"%s\\\"\" > scripts/top.v" % top_verilog
+  command = "echo \"\\`include \\\"%s\\\"\" > scripts/verilator/top.v" % top_verilog
   print("[command to run]: ", command)
   os.system(command)
 
@@ -40,12 +40,12 @@ if __name__ == "__main__":
                includeDir,
                topModule,
                define,
-               os.path.join(os.getcwd(), "scripts/top.v"),
-               os.path.join(os.getcwd(), "scripts/verilator_main.cpp"))
+               os.path.join(os.getcwd(), "scripts/verilator/top.v"),
+               os.path.join(os.getcwd(), "scripts/verilator/main.cpp"))
   print("[command to run]: ", command)
   os.system(command)
   
-  command = "rm scripts/top.v"
+  command = "rm scripts/verilator/top.v"
   print("[command to run]: ", command)
   os.system(command)
 
