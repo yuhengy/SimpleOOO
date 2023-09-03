@@ -6,7 +6,6 @@
 module veri_OOO(
   input clk,
   input rst
-
 );
 
   // STEP: instantiate OOO and ISA
@@ -15,12 +14,21 @@ module veri_OOO(
 
 
   // STEP: synchronized simulation
-  reg stall_ISA;
+  reg       stall_ISA;
+  reg [3:0] stalled_cycle;
   always @(posedge clk)
-    if (rst)
-      stall_ISA <= 1'b0;
-    else
-      stall_ISA <= !OOO.C_valid;
+    if (rst) begin
+      stall_ISA     <= 0;
+      stalled_cycle <= 0;
+    end
+    else if (OOO.veri_commit) begin
+      stall_ISA     <= 0;
+      stalled_cycle <= 0;
+    end
+    else begin
+      stall_ISA     <= 1;
+      stalled_cycle <= stalled_cycle + 1;
+    end
 
 
   // STEP: same initial state
@@ -62,6 +70,10 @@ module veri_OOO(
 
   // STEP: same pc and rf forever
   wire incorrect = !(same_pc && same_rf);
+
+
+  // STEP: same pc and rf forever
+  wire live = stalled_cycle < 10;
 
 endmodule
 

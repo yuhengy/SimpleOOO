@@ -23,5 +23,9 @@ assume {same_init_state}
 assert {!incorrect}
 
 
+# find unlive example
+assert {live}
+
+
 prove -all
 
