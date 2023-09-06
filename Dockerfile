@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:jammy-20230804
 
 # STEP: verilator
 RUN apt-get update && \
