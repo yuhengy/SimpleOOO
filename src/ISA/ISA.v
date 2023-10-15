@@ -1,40 +1,5 @@
 
-// STEP: Arch States
-`define REG_LEN       4
-`define REG_LEN_LOG   2
-`define RF_SIZE       4
-`define RF_SIZE_LOG   2
-`define MEMI_SIZE     8
-`define MEMI_SIZE_LOG 3
-`define MEMD_SIZE     4
-`define MEMD_SIZE_LOG 2
-
-
-
-
-// STEP: Inst
-`define INST_SIZE     6
-`define INST_SIZE_LOG 3
-`define INST_OP_LI  0
-`define INST_OP_ADD 1
-`define INST_OP_MUL 2
-`define INST_OP_LD  3
-`define INST_OP_BR  4
-`define INST_LEN (`INST_SIZE_LOG + `REG_LEN + 2*`RF_SIZE_LOG)
-`define OPCODE [`INST_LEN-1:`INST_LEN-`INST_SIZE_LOG]
-`define RS1    [`INST_LEN-`INST_SIZE_LOG-1:`INST_LEN-`INST_SIZE_LOG-`REG_LEN]
-`define RS2    [2*`RF_SIZE_LOG-1:`RF_SIZE_LOG]
-`define RD     [`RF_SIZE_LOG-1:0]
-
-
-
-
-// STEP: Init state
-// `define INIT_RF_CUSTOMIZED
-// `define INIT_MEMI_CUSTOMIZED
-// `define INIT_MEMD_CUSTOMIZED
-
-
+`include "param/ISA.v"
 
 
 module ISA(
@@ -87,7 +52,7 @@ module ISA(
 
   // STEP: PC
   always @(posedge clk)
-    if (rst) 
+    if (rst)
       pc <= 0;
     else
       pc <= next_pc;
@@ -150,6 +115,7 @@ module ISA(
   wire [`REG_LEN-1:0] rs2_data;
   assign rs1_data = rf[rs1];
   assign rs2_data = rf[rs2];
+  
   always @(posedge clk)
     if (rst) begin
 `ifdef INIT_RF_CUSTOMIZED

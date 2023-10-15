@@ -1,9 +1,9 @@
 
 `include "ISA/ISA.v"
-`include "OOO_v1/OOO.v"
+`include "OOO.v"
 
 
-module veri_OOO(
+module veri_corrrect(
   input clk,
   input rst
 );
@@ -21,7 +21,7 @@ module veri_OOO(
       stall_ISA     <= 0;
       stalled_cycle <= 0;
     end
-    else if (OOO.veri_commit) begin
+    else if (OOO.C_valid) begin
       stall_ISA     <= 0;
       stalled_cycle <= 0;
     end
