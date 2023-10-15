@@ -7,8 +7,8 @@
 
 
 // STEP: Micro-architecture states
-`define ROB_SIZE 4
-`define ROB_SIZE_LOG 2
+`define ROB_SIZE 8
+`define ROB_SIZE_LOG 3
 `define ROB_STATE_LEN 2
 `define IDLE        0
 `define STALLED     1
