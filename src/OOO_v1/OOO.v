@@ -1,11 +1,11 @@
 
-`include "param.v"
+`include "OOO_v1/param.v"
 
-`include "decode.v"
-`include "execute.v"
+`include "OOO_v1/decode.v"
+`include "OOO_v1/execute.v"
 
-`include "rf.v"
-`include "memi.v"
+`include "OOO_v1/rf.v"
+`include "OOO_v1/memi.v"
 
 
 module OOO(

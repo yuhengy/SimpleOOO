@@ -1,6 +1,6 @@
 
 # Input design
-analyze -incdir src -incdir src/OOO_v1 -sv src/OOO_v1/veri/correct.v
+analyze -incdir src -sv src/OOO_v1/veri/correct.v
 elaborate -top veri_corrrect -bbox_mul 256
 clock clk
 reset rst -non_resettable_regs 0
