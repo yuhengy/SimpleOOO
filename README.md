@@ -46,10 +46,10 @@ Then, you can check `scripts/run.sh` for run examples.
 
 You can create a docker container (and delete it afterwards) with the following commands, while `pwd` == TheoreticalOOO:
 
-1. Run `docker-compose up -d` to build up the container.
-2. Run `docker-compose exec env bash` to log in to the container.
-3. Run `docker-compose stop` to pause and `docker-compose up -d` to relaunch the container.
-4. Run `docker-compose down --rmi all` to clean up. (`docker system prune` can further clean up the cache, including your cache for other projects.)
+1. Run `docker compose up -d` to build up the container.
+2. Run `docker compose exec env bash` to log in to the container.
+3. Run `docker compose stop` to pause and `docker compose up -d` to relaunch the container.
+4. Run `docker compose down --rmi all` to clean up. (`docker system prune` can further clean up the cache, including your cache for other projects.)
 
 
 
