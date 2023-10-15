@@ -3,7 +3,7 @@
 `define OOO_V1_PARAM_V
 
 
-`include "param/ISA.v"
+`include "ISA/param.v"
 
 
 // STEP: Micro-architecture states

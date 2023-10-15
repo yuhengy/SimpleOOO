@@ -1,5 +1,5 @@
 
-`include "param/ISA.v"
+`include "ISA/param.v"
 
 
 module ISA(
