@@ -20,7 +20,7 @@ assume {same_init_state}
 
 
 # find incorrect example
-assert {!incorrect}
+assert {correct}
 
 
 # find unlive example

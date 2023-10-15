@@ -13,7 +13,7 @@ module OOO(
   input rst
 );
   integer i, j;
-  genvar k;
+  genvar p;
 
   // STEP: PC
   reg  [`MEMI_SIZE_LOG-1:0] F_pc;
@@ -313,26 +313,26 @@ module OOO(
   wire [`REG_LEN-1      :0] ROB_rd_data_wire[`ROB_SIZE-1:0];
   wire [`ROB_SIZE-1     :0] ROB_taken_wire;
   wire [`MEMI_SIZE_LOG-1:0] ROB_next_pc_wire[`ROB_SIZE-1:0];
-  generate for (k=0; k <`ROB_SIZE; k=k+1) begin
+  generate for (p=0; p <`ROB_SIZE; p=p+1) begin
   execute execute_instance(
-    .pc(ROB_pc[k]),
-    .op(ROB_op[k]),
+    .pc(ROB_pc[p]),
+    .op(ROB_op[p]),
 
-    .rs1_imm(ROB_rs1_imm[k]),
-    .rs1_br_offset(ROB_rs1_br_offset[k]),
-    .rs1_data(ROB_rs1_data[k]),
+    .rs1_imm(ROB_rs1_imm[p]),
+    .rs1_br_offset(ROB_rs1_br_offset[p]),
+    .rs1_data(ROB_rs1_data[p]),
 
-    .rs2_data(ROB_rs2_data[k]),
+    .rs2_data(ROB_rs2_data[p]),
 
-    .mem_addr(mem_addr[k]),
-    .mem_data(memd[mem_addr[k]]),
+    .mem_addr(mem_addr[p]),
+    .mem_data(memd[mem_addr[p]]),
 
-    .rd_data_use_alu(ROB_rd_data_use_alu[k]),
-    .rd_data(ROB_rd_data_wire[k]),
+    .rd_data_use_alu(ROB_rd_data_use_alu[p]),
+    .rd_data(ROB_rd_data_wire[p]),
 
-    .is_br(ROB_is_br[k]),
-    .taken(ROB_taken_wire[k]),
-    .next_pc(ROB_next_pc_wire[k])
+    .is_br(ROB_is_br[p]),
+    .taken(ROB_taken_wire[p]),
+    .next_pc(ROB_next_pc_wire[p])
   );
   end endgenerate
 
@@ -366,10 +366,25 @@ module OOO(
 
 
   // STEP: for verification
-  reg [`MEMI_SIZE_LOG-1:0] C_pc_last;
+  wire                      veri_commit;
+  reg  [`MEMI_SIZE_LOG-1:0] veri_pc_last;
+  wire [`REG_LEN-1      :0] veri_rf   [`RF_SIZE-1  :0];
+  wire [`INST_LEN-1     :0] veri_memi [`MEMI_SIZE-1:0];
+  wire [`REG_LEN-1      :0] veri_memd [`MEMD_SIZE-1:0];
+
+  assign veri_commit = C_valid;
   always @(posedge clk)
-    if (C_valid)
-      C_pc_last <= ROB_pc[ROB_head];
+    if (veri_commit)
+      veri_pc_last <= ROB_pc[ROB_head];
+  generate for(p=0; p<`RF_SIZE; p=p+1) begin
+    assign veri_rf[p] = rf_instance.array[p];
+  end endgenerate
+  generate for(p=0; p<`MEMI_SIZE; p=p+1) begin
+    assign veri_memi[p] = memi_instance.array[p];
+  end endgenerate
+  generate for(p=0; p<`MEMD_SIZE; p=p+1) begin
+    assign veri_memd[p] = memd[p];
+  end endgenerate
 
 endmodule
 
