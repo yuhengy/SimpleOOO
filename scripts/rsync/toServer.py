@@ -11,7 +11,7 @@ if __name__ == "__main__":
   experimentTag = sys.argv[2]
 
   command  = "rsync -av --relative --exclude '__pycache__' --exclude '.DS_Store'"
-  command += " scripts src results/%s %s:PrjTheoreticalOOO/%s" \
+  command += " scripts src results/%s %s:PrjSimpleOOO/%s" \
              % (experimentTag, server_name, experimentTag)
   print("[command to run]: ", command)
 

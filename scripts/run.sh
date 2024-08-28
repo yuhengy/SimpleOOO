@@ -1,5 +1,5 @@
 
-# Run everything with `pwd` == TheoreticalOOO or /vagrant
+# Run everything with `pwd` == SimpleOOO or /vagrant
 
 
 ## STEP1: Simulate the verilog with verilator

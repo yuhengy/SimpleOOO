@@ -1,23 +1,20 @@
 
-# TheoreticalOOO
+# SimpleOOO
 
-Simplest Out-of-Order processors to demonstrate the re-ordering scheme for security analysis.
-These processors only exist in theory because they are far from practical synthesizable processors.
-
+Simplest Out-of-Order processors with re-ordering schemes for security analysis.
 
 
 
-## Why Do We Need TheoreticalOOO?
+
+## Why Do We Need SimpleOOO?
 
 The re-ordering scheme in the Out-of-Order processors has been well-studied to improve the performance.
 However, after Spectre came out, people started to re-understand the re-ordering scheme, with a mindset of security.
 We wonder: **Could we systematically analyze the security of the re-ordering scheme?**
 
-This repo provides Out-of-Order processors with the simplest re-ordering schemes, which highlight the most critical ideas of the re-ordering schemes.
+This repo provides Out-of-Order processors with the simplest re-ordering schemes, which highlight the most critical ideas of the re-ordering.
 We also apply state-of-art Spectre defenses (e.g., invisiSpec, STT, GhostMinion) on these processors, which also only highlights the most critical ideas of the defenses.
-This could be a start point for researchers to study the security with various verification tools (e.g., formal verification, fuzzing).
-
-**Only after we can efficiently analyze these theoretical processors, we could move on to more practical processors.**
+This could be a start point for researchers to study the security with various verification tools (e.g., formal verification, fuzzing), given practical out-of-order processors (e.g., Boom, XiangShan) usually pose serious scalability problem on verification tools.
 
 
 
@@ -44,7 +41,7 @@ Then, you can check `scripts/run.sh` for run examples.
 
 ### Docker
 
-You can create a docker container (and delete it afterwards) with the following commands, while `pwd` == TheoreticalOOO:
+You can create a docker container (and delete it afterwards) with the following commands, while `pwd` == SimpleOOO:
 
 1. Run `docker compose up -d` to build up the container.
 2. Run `docker compose exec env bash` to log in to the container.
